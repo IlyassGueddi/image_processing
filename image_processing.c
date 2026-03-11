@@ -21,8 +21,11 @@ int main() {
     //read the pixels into array
     fread(data, sizeof(unsigned char), size , img);
 
-    int choice, brightness;
+    int choice, brightness,v;
     unsigned char *temp_data = (unsigned char *)malloc(size);
+    int sharp_ker = [0,-v,0,
+                    -v,1+4*v,-v,
+                    0,-v,0];
 
     while(true){
 
@@ -33,7 +36,7 @@ int main() {
         scanf("%d", &choice);
 
         if (choice == 1){
-            printf("brightnes value: ");
+            printf("brightnes value(0-255): ");
             scanf("%d", &brightness);
             for (int i = 0 ; i < size; i += 3){
                 // red
@@ -59,7 +62,7 @@ int main() {
                 
             }
 
-            // 1. Open a new file for Writing in Binary mode ("wb")
+            //Open a new file for Writing in Binary mode 
             FILE *out = fopen("output.ppm", "wb");
 
             if (out == NULL) {
@@ -67,21 +70,22 @@ int main() {
                 return 1;
             }
 
-            // 2. Write the PPM Header
+            // Write the PPM Header
             // P6 = Binary RGB, then Width, Height, and Max Color Value
             fprintf(out, "P6\n%d %d\n255\n", width, height);
 
-            // 3. Write the Array
+            // Write the Array
             // '1' is the size of each element (char), 'size' is the total bytes
             fwrite(temp_data, 1, size, out);
 
-            // 4. Close the file to save it to disk
+            // Close the file to save it to disk
             fclose(out);
 
             printf("Image saved successfully as output.ppm\n");
 
         }else if(choice == 2){
-
+            printf("sharpeness value: ");
+            scanf("%d", &v);
         }else if(choice == 3){
             
         }else{

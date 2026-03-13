@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+
+void image_save(const char *path, int width, int height, unsigned char *temp_data);
+
 int main() {
     FILE *img = fopen("img.ppm", "rb");
     if (img == NULL) return 1;
@@ -25,7 +28,6 @@ int main() {
     unsigned char *temp_data = (unsigned char *)malloc(size);
     
     while(true){
-
         /*
         .ppm files are stored usually as [R1,G1,B1,R2,G2,B2,R3,....,Bn]
         */
@@ -59,26 +61,7 @@ int main() {
                 
             }
 
-            //Open a new file for Writing in Binary mode 
-            FILE *out = fopen("output.ppm", "wb");
-
-            if (out == NULL) {
-                perror("Could not create output file");
-                return 1;
-            }
-
-            // Write the PPM Header
-            // P6 = Binary RGB, then Width, Height, and Max Color Value
-            fprintf(out, "P6\n%d %d\n255\n", width, height);
-
-            // Write the Array
-            // '1' is the size of each element (char), 'size' is the total bytes
-            fwrite(temp_data, 1, size, out);
-
-            // Close the file to save it to disk
-            fclose(out);
-
-            printf("Image saved successfully as output.ppm\n");
+            image_save("output.ppm", width, height, temp_data);
 
         }else if(choice == 2){
             
@@ -116,26 +99,8 @@ int main() {
                     }
                 }
             }
-            //Open a new file for Writing in Binary mode 
-            FILE *out = fopen("output.ppm", "wb");
-
-            if (out == NULL) {
-                perror("Could not create output file");
-                return 1;
-            }
-
-            // Write the PPM Header
-            // P6 = Binary RGB, then Width, Height, and Max Color Value
-            fprintf(out, "P6\n%d %d\n255\n", width, height);
-
-            // Write the Array
-            // '1' is the size of each element (char), 'size' is the total bytes
-            fwrite(temp_data, 1, size, out);
-
-            // Close the file to save it to disk
-            fclose(out);
-
-            printf("Image saved successfully as output.ppm\n");
+            
+            image_save("output.ppm", width, height, temp_data);
 
         }else if(choice == 3){
             printf("Blur value(1-3): ");
@@ -263,27 +228,8 @@ int main() {
                     break;
 
             }
-            
-            //Open a new file for Writing in Binary mode 
-            FILE *out = fopen("output.ppm", "wb");
 
-            if (out == NULL) {
-                perror("Could not create output file");
-                return 1;
-            }
-
-            // Write the PPM Header
-            // P6 = Binary RGB, then Width, Height, and Max Color Value
-            fprintf(out, "P6\n%d %d\n255\n", width, height);
-
-            // Write the Array
-            // '1' is the size of each element (char), 'size' is the total bytes
-            fwrite(temp_data, 1, size, out);
-
-            // Close the file to save it to disk
-            fclose(out);
-
-            printf("Image saved successfully as output.ppm\n");
+            image_save("output.ppm", width, height, temp_data);
 
         }else{
             printf("invalid value;\n");
@@ -296,4 +242,27 @@ int main() {
     free(data);
     free(temp_data);
     fclose(img);
+}
+
+
+
+void image_save(const char *path, int width, int height, unsigned char *temp_data) {
+    int size = width * height * 3;
+    
+    // Use the 'path' variable passed into the function, not a hardcoded name
+    FILE *out = fopen(path, "wb");
+
+    if (out == NULL) {
+        perror("Could not create output file");
+        return; // Functions returning 'void' use 'return;' without a number
+    }
+
+    // Write the PPM Header
+    fprintf(out, "P6\n%d %d\n255\n", width, height);
+
+    // Write the Array
+    fwrite(temp_data, 1, size, out);
+
+    fclose(out);
+    printf("Image saved successfully as %s\n", path);
 }
